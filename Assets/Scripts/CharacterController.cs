@@ -18,7 +18,7 @@ public class CharacterController : MonoBehaviour
     private Rigidbody2D rb;
     private SpriteRenderer spriteRenderer;
 
-    private float originalGravityScale = 1f; 
+    private float originalGravityScale; 
 
     private bool isGrounded;
     private float horizontalInput;
@@ -44,7 +44,20 @@ public class CharacterController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        originalGravityScale = rb.gravityScale;
     }
+
+    private void OnTriggerEnter2D(Collider2D other)
+        {
+            if (other.CompareTag("Ladder"))
+                isOnLadder = true;
+        }
+
+        private void OnTriggerExit2D(Collider2D other)
+        {
+            if (other.CompareTag("Ladder"))
+                isOnLadder = false;
+}
 
     void Update()
     {
@@ -62,7 +75,6 @@ public class CharacterController : MonoBehaviour
         verticalInput = Input.GetAxisRaw("Vertical"); 
 
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
-
 
         if ((verticalInput != 0) && isOnLadder) // Assumes no jumping once off the ground
         {   
