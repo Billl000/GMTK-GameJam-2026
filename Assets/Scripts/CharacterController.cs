@@ -4,6 +4,7 @@ public class CharacterController : MonoBehaviour
 {
     [Header("Movement")]
     [SerializeField] private float moveSpeed = 8f;
+    [SerializeField] private float climbSpeed = 6f;
     [SerializeField] private float jumpForce = 16f;
 
     [Header("Ground Check")]
@@ -17,8 +18,11 @@ public class CharacterController : MonoBehaviour
     private Rigidbody2D rb;
     private SpriteRenderer spriteRenderer;
 
+    private float originalGravityScale = 1f; 
+
     private bool isGrounded;
     private float horizontalInput;
+    private float verticalInput;
     private float coyoteTimeCounter;
 
     [Header("Dashing")]
@@ -33,6 +37,8 @@ public class CharacterController : MonoBehaviour
     private bool isKnockedback;
     private float knockbackTime = 0f;
     private float knockbackDuration = 0.5f;
+    private bool isOnLadder = false;
+    private bool isClimbing = false;
 
     void Awake()
     {
@@ -53,8 +59,21 @@ public class CharacterController : MonoBehaviour
         }
 
         horizontalInput = Input.GetAxisRaw("Horizontal"); // -1, 0, or 1
+        verticalInput = Input.GetAxisRaw("Vertical"); 
 
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
+
+
+        if ((verticalInput != 0) && isOnLadder) // Assumes no jumping once off the ground
+        {   
+            isClimbing = true;
+            rb.gravityScale = 0f; 
+        }
+        else if (!isOnLadder)
+        {
+            isClimbing = false;
+            rb.gravityScale = originalGravityScale; 
+        }
 
         if (isGrounded)
         {
@@ -122,6 +141,13 @@ public class CharacterController : MonoBehaviour
     {
         if (isKnockedback || isDashing) return;
 
-        rb.linearVelocity = new Vector2(horizontalInput * moveSpeed, rb.linearVelocity.y);
+        if (isOnLadder)
+        {
+            rb.linearVelocity = new Vector2(horizontalInput * moveSpeed, verticalInput * climbSpeed);
+        }
+        else
+        {
+            rb.linearVelocity = new Vector2(horizontalInput * moveSpeed, rb.linearVelocity.y);
+        }
     }
 }
