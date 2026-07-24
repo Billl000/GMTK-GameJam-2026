@@ -16,9 +16,18 @@ public class PlayerDeath : MonoBehaviour
     {
         if (collision != null && collision.CompareTag("DeathZone"))
         {
-            playerController.enabled = false; // Disable player controller
-            StartCoroutine(DeathCooldownRoutine());
+            TriggerDeath();
         }
+    }
+
+    public void TriggerDeath()
+    {
+        if (!playerController.enabled)
+            return;
+
+        playerController.enabled = false; // Disable player controller
+        StartCoroutine(DeathCooldownRoutine());
+
     }
 
     private IEnumerator DeathCooldownRoutine()

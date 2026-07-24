@@ -53,11 +53,11 @@ public class CharacterController : MonoBehaviour
                 isOnLadder = true;
         }
 
-        private void OnTriggerExit2D(Collider2D other)
-        {
+    private void OnTriggerExit2D(Collider2D other)
+    {
             if (other.CompareTag("Ladder"))
                 isOnLadder = false;
-}
+    }
 
     void Update()
     {
