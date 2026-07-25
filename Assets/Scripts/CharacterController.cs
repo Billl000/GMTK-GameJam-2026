@@ -1,4 +1,6 @@
 using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 
 public class CharacterController : MonoBehaviour
 {
@@ -10,7 +12,7 @@ public class CharacterController : MonoBehaviour
     [Header("Ground Check")]
     [SerializeField] private Transform groundCheck;
     [SerializeField] private float groundCheckRadius = 0.2f;
-    [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private LayerMask[] groundLayer;
 
     [Header("Coyote Time")]
     [SerializeField] private float coyoteTime = 0.15f;
@@ -31,6 +33,10 @@ public class CharacterController : MonoBehaviour
     [SerializeField] private float dashCooldownDuration = 1f;
     [SerializeField] private float dashDuration = 0.15f;
 
+    [Header("Drop Through")]
+    [SerializeField] private Collider2D playerCollider;
+    [SerializeField] private LayerMask oneWayPlatformMask;
+
     private bool isDashing = false;
     private float dashTimer = 0f;
 
@@ -45,6 +51,7 @@ public class CharacterController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         originalGravityScale = rb.gravityScale;
+        playerCollider = GetComponent<Collider2D>();
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -74,7 +81,15 @@ public class CharacterController : MonoBehaviour
         horizontalInput = Input.GetAxisRaw("Horizontal"); // -1, 0, or 1
         verticalInput = Input.GetAxisRaw("Vertical"); 
 
-        isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
+        isGrounded = false;
+        foreach (LayerMask layer in groundLayer)
+        {
+            if (Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, layer))
+            {
+                isGrounded = true;
+                break;
+            }
+        }
 
         if ((verticalInput != 0) && isOnLadder) // Assumes no jumping once off the ground
         {   
@@ -96,10 +111,16 @@ public class CharacterController : MonoBehaviour
             coyoteTimeCounter -= Time.deltaTime;
         }
 
-        if (Input.GetButtonDown("Jump") && coyoteTimeCounter > 0f)
+        bool holdingDown = Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow);
+        if (Input.GetButtonDown("Jump"))
         {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
-            coyoteTimeCounter = 0f;
+            if (holdingDown && TryDropThrough())      // returns true if a platform was found
+            { /* dropped through, no jump */ }
+            else if (coyoteTimeCounter > 0f)
+            {
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+                coyoteTimeCounter = 0f;
+            }
         }
 
         if (dashCooldown > 0f)
@@ -161,5 +182,36 @@ public class CharacterController : MonoBehaviour
         {
             rb.linearVelocity = new Vector2(horizontalInput * moveSpeed, rb.linearVelocity.y);
         }
+    }
+
+    private bool TryDropThrough()
+    {
+        RaycastHit2D hit = Physics2D.Raycast(
+            playerCollider.bounds.center, Vector2.down,
+            playerCollider.bounds.extents.y + 0.2f,
+            oneWayPlatformMask);
+
+        if (hit.collider != null &&
+            hit.collider.TryGetComponent(out PlatformEffector2D _))
+        {
+            StartCoroutine(DisableCollision(hit.collider));
+            return true;
+        }
+        return false;  
+    }
+
+    private IEnumerator DisableCollision(Collider2D platform)
+    {
+        Physics2D.IgnoreCollision(playerCollider, platform, true);
+
+        float startFeetY = playerCollider.bounds.min.y;
+        float elapsed = 0f, safety = 1f;
+
+        while (playerCollider.bounds.max.y > startFeetY && elapsed < safety)
+        {
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        Physics2D.IgnoreCollision(playerCollider, platform, false);
     }
 }

@@ -4,6 +4,8 @@ using UnityEngine.SceneManagement;
 
 public class ClockHandsSpinning : MonoBehaviour
 {
+    public static ClockHandsSpinning Instance { get; private set; }
+
     public float rotationSpeed = 30f;
     public bool triggersDeath = false;  
 
@@ -11,6 +13,8 @@ public class ClockHandsSpinning : MonoBehaviour
     private float timeRemaining;
     private PlayerDeath playerDeath;
     private bool hasTriggered;
+
+    private bool isStopped;
 
     private void Awake()
     {
@@ -21,10 +25,11 @@ public class ClockHandsSpinning : MonoBehaviour
 
     private void Update()
     {
+        if (isStopped) return;
+
         if (triggersDeath)
         {
             if (hasTriggered) return;
-
             if (timeRemaining > 0f)
             {
                 timeRemaining -= Time.deltaTime;
@@ -40,5 +45,15 @@ public class ClockHandsSpinning : MonoBehaviour
         {
             transform.Rotate(Vector3.forward, rotationSpeed * Time.deltaTime);
         }
+    }
+
+    public void StopSpin()
+    {
+        isStopped = true;
+    }
+
+    public void ResumeSpin()
+    {
+        isStopped = false;
     }
 }

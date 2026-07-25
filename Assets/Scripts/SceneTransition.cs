@@ -30,6 +30,9 @@ public class SceneTransition : MonoBehaviour
             //FindAnyObjectByType<AudioManager>().Play("Level Completed");
             // Load the next scene when the player is in the trigger and presses E
             //UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex + 1);
+            
+            foreach (var hand in FindObjectsOfType<ClockHandsSpinning>())
+                hand.StopSpin();
             SceneChanger.Instance.LoadNextScene();
         }
     }
@@ -37,6 +40,8 @@ public class SceneTransition : MonoBehaviour
     {
         if (inDoors && Input.GetKeyDown(KeyCode.E))
         {
+            foreach (var hand in FindObjectsOfType<ClockHandsSpinning>())
+                hand.StopSpin();
             SceneChanger.Instance.LoadNextScene();
         }
     }

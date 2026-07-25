@@ -26,16 +26,20 @@ public class SceneChanger : MonoBehaviour
 
     IEnumerator LoadSceneWithTransition(string sceneName)
     {
+        if (isTransitioning) yield break;
+        isTransitioning = true;
+
         changerPrefab.gameObject.SetActive(true);
         transitionAnim.SetTrigger("Start");
         //FindAnyObjectByType<AudioManager>().Play("Begin Background Music");
-        yield return new WaitForSeconds(transitionTime);
+        yield return new WaitForSecondsRealtime(transitionTime);
 
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
         while (!asyncLoad.isDone)
         {
             yield return null;
         }
+        isTransitioning = false;
     }
 
     // Load a scene by its index number in Build Settings
@@ -52,13 +56,14 @@ public class SceneChanger : MonoBehaviour
         changerPrefab.gameObject.SetActive(true);
         transitionAnim.SetTrigger("Start");
         //FindAnyObjectByType<AudioManager>().Play("Begin Background Music");
-        yield return new WaitForSeconds(transitionTime);
+        yield return new WaitForSecondsRealtime(transitionTime);
 
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneIndex);
         while (!asyncLoad.isDone)
         {
             yield return null;
         }
+        isTransitioning = false;
     }
 
     public void LoadNextScene()
@@ -79,6 +84,5 @@ public class SceneChanger : MonoBehaviour
     {
         Application.Quit();
     }
-
-
 }
+

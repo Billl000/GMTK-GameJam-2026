@@ -40,6 +40,10 @@ public class PlayerDeath : MonoBehaviour
     {
         playerController.enabled = false;
         //FindAnyObjectByType<AudioManager>().Play("PlayerDeath"); // Play death sound
+        
+        foreach (var hand in FindObjectsOfType<ClockHandsSpinning>())
+            hand.StopSpin();
+
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); // Reload the current scene
         //in the future, animation of reset hand clock
         transform.position = spawnPosition;
