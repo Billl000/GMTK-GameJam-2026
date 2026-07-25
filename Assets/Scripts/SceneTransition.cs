@@ -17,6 +17,7 @@ public class SceneTransition : MonoBehaviour
         if (collision.gameObject.CompareTag("Player") && Input.GetKeyDown(KeyCode.E))
         {
             Debug.Log("Player is in the trigger and pressed E.");
+            FindAnyObjectByType<AudioManager>().Play("Level Completed");
             // Load the next scene when the player is in the trigger and presses E
             UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex + 1);
         }

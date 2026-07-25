@@ -17,6 +17,7 @@ public class SceneChanger : MonoBehaviour
     IEnumerator LoadSceneWithTransition(string sceneName)
     {
         transitionAnim.SetTrigger("Start");
+        FindAnyObjectByType<AudioManager>().Play("Begin Background Music");
         yield return new WaitForSeconds(transitionTime);
 
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);

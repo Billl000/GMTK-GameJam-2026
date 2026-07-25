@@ -32,7 +32,6 @@ public class PlayerDeath : MonoBehaviour
 
     private IEnumerator DeathCooldownRoutine()
     {
-
         yield return new WaitForSeconds(1f); // Wait for 1 second before respawning
         Die();
     }
@@ -40,6 +39,7 @@ public class PlayerDeath : MonoBehaviour
     private void Die()
     {
         playerController.enabled = false;
+        //FindAnyObjectByType<AudioManager>().Play("PlayerDeath"); // Play death sound
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); // Reload the current scene
         //in the future, animation of reset hand clock
         transform.position = spawnPosition;
