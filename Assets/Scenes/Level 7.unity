@@ -133,6 +133,7 @@ GameObject:
   - component: {fileID: 20689375}
   - component: {fileID: 20689377}
   - component: {fileID: 20689378}
+  - component: {fileID: 20689379}
   m_Layer: 0
   m_Name: Square
   m_TagString: Player
@@ -320,6 +321,7 @@ MonoBehaviour:
     m_Bits: 2048
   vineCheckRadius: 1
   canClimbVine: 1
+  animator: {fileID: 20689379}
 --- !u!114 &20689378
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -333,6 +335,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawnPosition: {x: 0, y: 0, z: 0}
+--- !u!95 &20689379
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 20689372}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &24838661
 GameObject:
   m_ObjectHideFlags: 0
