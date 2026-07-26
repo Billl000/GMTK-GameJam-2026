@@ -2262,7 +2262,7 @@ MonoBehaviour:
   m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 1920, y: 1080}
+  m_ReferenceResolution: {x: 800, y: 600}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0.5
   m_PhysicalUnit: 3
@@ -4367,6 +4367,11 @@ MonoBehaviour:
   oneWayPlatformMask:
     serializedVersion: 2
     m_Bits: 1024
+  vineLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  vineCheckRadius: 0.3
+  canClimbVine: 1
 --- !u!61 &1469029867
 BoxCollider2D:
   m_ObjectHideFlags: 0
