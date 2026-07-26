@@ -37,6 +37,15 @@ public class CharacterController : MonoBehaviour
     [SerializeField] private Collider2D playerCollider;
     [SerializeField] private LayerMask oneWayPlatformMask;
 
+    [Header("Vine")]
+    [SerializeField] private LayerMask vineLayer;
+    [SerializeField] private float vineCheckRadius = 0.3f;
+    [SerializeField] private bool canClimbVine = true;
+    private Transform clingedVine;
+
+    private bool isOnVine;
+    private bool isClinging;
+
     private bool isDashing = false;
     private float dashTimer = 0f;
 
@@ -45,6 +54,8 @@ public class CharacterController : MonoBehaviour
     private float knockbackDuration = 0.5f;
     private bool isOnLadder = false;
     private bool isClimbing = false;
+
+
 
     void Awake()
     {
@@ -114,8 +125,12 @@ public class CharacterController : MonoBehaviour
         bool holdingDown = Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow);
         if (Input.GetButtonDown("Jump"))
         {
-            if (holdingDown && TryDropThrough())      // returns true if a platform was found
-            { /* dropped through, no jump */ }
+            if (isClinging)
+            {
+                ReleaseVine();
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);   // jump off
+            }
+            else if (holdingDown && TryDropThrough()) { /* dropped through */ }
             else if (coyoteTimeCounter > 0f)
             {
                 rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
@@ -126,7 +141,7 @@ public class CharacterController : MonoBehaviour
         if (dashCooldown > 0f)
             dashCooldown -= Time.deltaTime;
 
-        if (Input.GetKeyDown(KeyCode.LeftShift) && dashCooldown <= 0f)
+        if (Input.GetKeyDown(KeyCode.LeftShift) && dashCooldown <= 0f && !isClinging)
         {
             isDashing = true;
             dashTimer = dashDuration;
@@ -138,6 +153,19 @@ public class CharacterController : MonoBehaviour
             rb.AddForce(new Vector2(dashDir * dashForce, 0f), ForceMode2D.Impulse);
 
         }
+
+        Collider2D vineHit = Physics2D.OverlapCircle(transform.position, vineCheckRadius, vineLayer);
+        isOnVine = vineHit != null;
+        if (!isOnVine) ReleaseVine();
+
+        if (isOnVine && Input.GetKeyDown(KeyCode.W))
+        {
+            isClinging = true;
+            rb.linearVelocity = Vector2.zero;
+            clingedVine = vineHit.transform;
+            transform.SetParent(clingedVine);
+        }
+
 
         if (isDashing)
         {
@@ -156,9 +184,23 @@ public class CharacterController : MonoBehaviour
         else if (horizontalInput < 0f)
         {
             spriteRenderer.flipX = true;
-            
+
         }
 
+        if (isClinging)
+        {
+            rb.gravityScale = 0f;
+        }
+        else if ((verticalInput != 0) && isOnLadder)
+        {
+            isClimbing = true;
+            rb.gravityScale = 0f;
+        }
+        else if (!isOnLadder)
+        {
+            isClimbing = false;
+            rb.gravityScale = originalGravityScale;
+        }
 
     }
 
@@ -174,14 +216,17 @@ public class CharacterController : MonoBehaviour
     {
         if (isKnockedback || isDashing) return;
 
+        if (isClinging)
+        {
+            float climb = canClimbVine ? verticalInput * climbSpeed : 0f;
+            rb.linearVelocity = new Vector2(0f, climb);
+            return;
+        }
+
         if (isOnLadder)
-        {
             rb.linearVelocity = new Vector2(horizontalInput * moveSpeed, verticalInput * climbSpeed);
-        }
         else
-        {
             rb.linearVelocity = new Vector2(horizontalInput * moveSpeed, rb.linearVelocity.y);
-        }
     }
 
     private bool TryDropThrough()
@@ -213,5 +258,15 @@ public class CharacterController : MonoBehaviour
             yield return null;
         }
         Physics2D.IgnoreCollision(playerCollider, platform, false);
+    }
+    private void ReleaseVine()
+    {
+        if (isClinging)
+        {
+            transform.SetParent(null, true);
+            isClinging = false;
+            rb.gravityScale = originalGravityScale;
+        }
+        clingedVine = null;
     }
 }

@@ -43,7 +43,8 @@ public class ConvertTilesToGameobject : MonoBehaviour
                 srEnd.sprite = tileEnd.sprite;
                 srEnd.sortingOrder = sortingOrder;
                 objEnd.transform.localPosition = new Vector3(0f, -1f, 0f);  // adjust as needed
-
+                objEnd.tag = "Vines";
+                objEnd.gameObject.layer = LayerMask.NameToLayer("Vines");
             }
             
             Rigidbody2D rb = obj.AddComponent<Rigidbody2D>();
@@ -64,6 +65,8 @@ public class ConvertTilesToGameobject : MonoBehaviour
         {
             if (objects[i] != null && objectsToAttach[i] != null && gameObject.name == "Vines") {
                 objects[i].position = objectsToAttach[i].transform.position + spawnOffset;
+                objects[i].tag = "Vines";
+                objects[i].gameObject.layer = LayerMask.NameToLayer("Vines");
             }
             else if (objects[i] != null && objectsToAttach[i] != null && gameObject.name == "Spikes") {
                 objects[i].transform.SetParent(objectsToAttach[i].transform, false);
