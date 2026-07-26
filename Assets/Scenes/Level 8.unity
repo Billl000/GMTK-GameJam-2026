@@ -321,6 +321,7 @@ MonoBehaviour:
     m_Bits: 2048
   vineCheckRadius: 1
   canClimbVine: 1
+  animator: {fileID: 20689379}
 --- !u!114 &20689378
 MonoBehaviour:
   m_ObjectHideFlags: 0

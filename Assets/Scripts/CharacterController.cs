@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using NUnit.Framework;
 
 public class CharacterController : MonoBehaviour
 {
@@ -54,6 +55,9 @@ public class CharacterController : MonoBehaviour
     private float knockbackDuration = 0.5f;
     private bool isOnLadder = false;
     private bool isClimbing = false;
+
+    [Header("Animations")]
+    [SerializeField] private Animator animator;
 
 
 
@@ -202,6 +206,8 @@ public class CharacterController : MonoBehaviour
             rb.gravityScale = originalGravityScale;
         }
 
+        HandleMovementAnims();
+
     }
 
     public void ApplyKnockback(Vector2 force)
@@ -269,4 +275,34 @@ public class CharacterController : MonoBehaviour
         }
         clingedVine = null;
     }
+
+    private void HandleMovementAnims()
+    {
+        if (horizontalInput != 0) {
+            animator.SetBool("isRunning", true);
+        }
+        else
+        {
+            animator.SetBool("isRunning", false);
+        }
+
+        if (isGrounded)
+        {
+            animator.SetBool("isOnGround", true);
+        }
+        else
+        {
+            animator.SetBool("isOnGround", false);
+        }
+
+        if (isDashing)
+        {
+            animator.SetBool("dashCheck", true);
+        }
+        else
+        {
+            animator.SetBool("dashCheck", false);
+        }
+    }
+
 }
