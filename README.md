@@ -6,3 +6,10 @@ A puzzle platformer game where you are inside a stopwatch counting down, and you
 
 Assets Used:
 - Kenny's 1-bit platformer pack (https://www.kenney.nl/assets/1-bit-platformer-pack)
+
+Branch specification: Fixing and enriching audio
+Todo: 
+- Add button clicking sound
+- Add game ending sound
+- (Future task) Begin making authentic OST 
+
