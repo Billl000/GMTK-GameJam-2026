@@ -31,7 +31,7 @@ public class SceneChanger : MonoBehaviour
 
         changerPrefab.gameObject.SetActive(true);
         transitionAnim.SetTrigger("Start");
-        //FindAnyObjectByType<AudioManager>().Play("Begin Background Music");
+        //FindAnyObjectByType<AudioManager>().Play("Background Music");
         yield return new WaitForSecondsRealtime(transitionTime);
 
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
@@ -55,7 +55,7 @@ public class SceneChanger : MonoBehaviour
 
         changerPrefab.gameObject.SetActive(true);
         transitionAnim.SetTrigger("Start");
-        //FindAnyObjectByType<AudioManager>().Play("Begin Background Music");
+        //FindAnyObjectByType<AudioManager>().Play("Background Music");
         yield return new WaitForSecondsRealtime(transitionTime);
 
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneIndex);

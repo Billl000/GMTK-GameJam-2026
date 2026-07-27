@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class SceneTransition : MonoBehaviour
 {
-    
     private bool inDoors;
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -31,6 +30,7 @@ public class SceneTransition : MonoBehaviour
             // Load the next scene when the player is in the trigger and presses E
             //UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex + 1);
             
+            FindAnyObjectByType<AudioManager>().Play("Level Completed");
             foreach (var hand in FindObjectsOfType<ClockHandsSpinning>())
                 hand.StopSpin();
             SceneChanger.Instance.LoadNextScene();
@@ -40,8 +40,10 @@ public class SceneTransition : MonoBehaviour
     {
         if (inDoors && Input.GetKeyDown(KeyCode.E))
         {
+            FindAnyObjectByType<AudioManager>().Play("Level Completed");
             foreach (var hand in FindObjectsOfType<ClockHandsSpinning>())
                 hand.StopSpin();
+            
             SceneChanger.Instance.LoadNextScene();
         }
     }
